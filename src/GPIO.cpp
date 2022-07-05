@@ -18,8 +18,8 @@ namespace photobooth {
     };
 
     void GPIOTaster::updateButtonState() {
-        const int currentDigitalState = digitalRead(this->getButtonId()) == 1;
-        if(currentDigitalState != this->buttonState) {
+        const int currentDigitalState = (bool) digitalRead(this->getButtonId()) == 1;
+        if(this->buttonState != currentDigitalState) {
             this->buttonState = currentDigitalState;
             std::cout << "Pressed button " << this->buttonName << std::endl;
         }
