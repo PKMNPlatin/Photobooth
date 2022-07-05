@@ -22,9 +22,9 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Successfully initialized a camera!" << std::endl;
 
+
     photobooth::GPIO GPIO;
     GPIO.registerGPIOPins();
-
     while(true) {
         GPIO.checkPinState();
     }

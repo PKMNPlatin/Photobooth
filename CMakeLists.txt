@@ -11,6 +11,8 @@ add_executable(${PROJECT_NAME} src/main.cpp ${src})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_11)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11 CXX_EXTENSIONS OFF CXX_STANDARD_REQUIRED ON)
 
+#add_definitions( -DADD_GPIO_SUPPORT )
+
 # --------------------------------------------------------------------------------------------------------
 # Include "include" folder
 # --------------------------------------------------------------------------------------------------------

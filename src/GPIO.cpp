@@ -18,7 +18,7 @@ namespace photobooth {
     };
 
     void GPIOTaster::updateButtonState() {
-        const int currentDigitalState = (bool) digitalRead(this->getButtonId()) == 1;
+        const bool currentDigitalState = digitalRead(this->getButtonId()) == 1;
         if(prevButtonState != currentDigitalState) {
             buttonState = currentDigitalState;
             if(prevButtonState != currentDigitalState) {
@@ -41,6 +41,7 @@ namespace photobooth {
     //-------------------------------------------------------------------------------------
 
     void GPIO::registerGPIOPins() {
+#ifdef ADD_GPIO_SUPPORT
         wiringPiSetup();
         this->taster.emplace_back(GPIOTaster("PREV", 2));
         this->taster.emplace_back( GPIOTaster("PRINT", 3));
@@ -51,6 +52,7 @@ namespace photobooth {
             pinMode(taster.getButtonId(), INPUT);
             std::cout << "Initalized Pin " << taster.getButtonId() << " as "<< taster.getName() << std::endl;
         }
+#endif
     };
 
     void GPIO::checkPinState() {
