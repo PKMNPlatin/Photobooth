@@ -21,6 +21,7 @@ namespace photobooth {
         std::string buttonName;
         int buttonId;
         bool buttonState = false;
+        bool prevButtonState = false;
 
     public:
 

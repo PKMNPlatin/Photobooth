@@ -7,28 +7,28 @@ static void onGPhotoError(GPLogLevel level, const char *domain, const char *str,
 }
 
 int main(int argc, char* argv[]) {
-    int retVal;
-    Camera *pCamera;
-    GPContext *pGpContext = gp_context_new();
-
-    gp_camera_new(&pCamera);
-    printf("Camera initializing...\n");
-
-    retVal = gp_camera_init(pCamera, pGpContext);
-    if(retVal != GP_OK) {
-        std::cout << "Error while initializing the camera. Exiting..." << std::endl;
-        exit(1);
-    }
-
-    std::cout << "Successfully initialized a camera!" << std::endl;
-
-//    photobooth::GPIO GPIO;
-//    GPIO.registerGPIOPins();
+//    int retVal;
+//    Camera *pCamera;
+//    GPContext *pGpContext = gp_context_new();
 //
-//    while(true) {
-//        GPIO.checkPinState();
+//    gp_camera_new(&pCamera);
+//    printf("Camera initializing...\n");
+//
+//    retVal = gp_camera_init(pCamera, pGpContext);
+//    if(retVal != GP_OK) {
+//        std::cout << "Error while initializing the camera. Exiting..." << std::endl;
+//        exit(1);
 //    }
-    gp_camera_exit(pCamera, pGpContext);
+//
+//    std::cout << "Successfully initialized a camera!" << std::endl;
+
+    photobooth::GPIO GPIO;
+    GPIO.registerGPIOPins();
+
+    while(true) {
+        GPIO.checkPinState();
+    }
+//    gp_camera_exit(pCamera, pGpContext);
     return 0;
 }
 
