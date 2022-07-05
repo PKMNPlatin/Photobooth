@@ -1,7 +1,6 @@
 #include <gphoto2/gphoto2.h>
 #include <iostream>
-
-//#include "gpio.h"
+#include "GPIO.h"
 
 static void onGPhotoError(GPLogLevel level, const char *domain, const char *str, void* data) {
     fprintf(stdout, "%s\n", str);
@@ -20,15 +19,16 @@ int main(int argc, char* argv[]) {
         std::cout << "Error while initializing the camera. Exiting..." << std::endl;
         exit(1);
     }
-    std::cout << "Successfully initialized a camera!" << std::endl;
-    gp_camera_exit(pCamera, pGpContext);
 
-//    photobooth::gpio gpio;
-//    gpio.setupGPIOPins();
-//
-//    while(true) {
-//        gpio.readCurrentState();
-//    }
+    std::cout << "Successfully initialized a camera!" << std::endl;
+
+    photobooth::GPIO GPIO;
+    GPIO.registerGPIOPins();
+
+    while(true) {
+        GPIO.checkPinState();
+    }
+    gp_camera_exit(pCamera, pGpContext);
     return 0;
 }
 
