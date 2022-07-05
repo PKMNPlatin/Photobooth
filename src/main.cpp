@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 //
 ////    gp_log_add_func(GP_LOG_DEBUG, onGPhotoError, NULL);
 //    gp_camera_new(&pCamera);
-//
+//https://discord.com/channels/@me/419937058178596864
 //    printf("Camera initializing...\n");
 //
 //    retVal = gp_camera_init(pCamera, pGpContext);
