@@ -29,8 +29,11 @@ namespace photobooth {
 
         void updateButtonState();
 
-        const std::string getName();
-        const int getButtonId();
+        std::string getName();
+
+        int getButtonId();
+
+        bool getState();
 
     };
 
@@ -40,7 +43,12 @@ namespace photobooth {
 
     public:
         void registerGPIOPins();
+
         void checkPinState();
+
+        GPIOTaster *getTasterByPin(int pin);
+
+        GPIOTaster *getTasterByName(const std::string &name);
 
     };
 

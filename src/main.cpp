@@ -1,35 +1,24 @@
-#include <gphoto2/gphoto2.h>
 #include <iostream>
+#include <csignal>
 #include "GPIO.h"
+#include "gphoto2pp/camera_wrapper.hpp"
 
-static void onGPhotoError(GPLogLevel level, const char *domain, const char *str, void* data) {
-    fprintf(stdout, "%s\n", str);
-}
-
-int main(int argc, char* argv[]) {
-    int retVal;
-    Camera *pCamera;
-    GPContext *pGpContext = gp_context_new();
-
-    gp_camera_new(&pCamera);
-    printf("Camera initializing...\n");
-
-    retVal = gp_camera_init(pCamera, pGpContext);
-    if(retVal != GP_OK) {
-        std::cout << "Error while initializing the camera. Exiting..." << std::endl;
-        exit(1);
-    }
-
-    std::cout << "Successfully initialized a camera!" << std::endl;
-
-
+int main(int argc, char *argv[]) {
+    gphoto2pp::CameraWrapper camera;
+    std::cout << camera.getModel() << std::endl;
+    std::cout << camera.getSummary() << std::endl;
     photobooth::GPIO GPIO;
     GPIO.registerGPIOPins();
-    while(true) {
+    while (true) {
         GPIO.checkPinState();
+
+        auto capturePin = GPIO.getTasterByPin(5);
+        if (capturePin && capturePin->getState()) {
+
+        }
+        sleep(3);
+
     }
-    gp_camera_exit(pCamera, pGpContext);
     return 0;
 }
-
 //cameraFile.save("my-gphoto2pp-test.jpg");
