@@ -23,7 +23,7 @@ namespace photobooth {
             buttonState = currentDigitalState;
             if (prevButtonState != currentDigitalState) {
                 prevButtonState = buttonState;
-                std::cout << "Pressed " << this->getName() << std::endl;
+//                std::cout << "Pressed " << this->getName() << std::endl;
             }
         }
     }

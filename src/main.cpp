@@ -19,6 +19,7 @@ int main(int argc, char *argv[]) {
             gphoto2pp::CameraFileWrapper fileWrapper;
             gphoto2pp::helper::capture(camera, fileWrapper);
             fileWrapper.save("Test"+ std::to_string(i)+".png");
+            std::cout << "Shutterd!" << std::endl;
         }
     }
     return 0;
