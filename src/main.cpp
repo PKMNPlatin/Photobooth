@@ -15,6 +15,7 @@ int main(int argc, char *argv[]) {
         GPIO.checkPinState();
 
         auto capturePin = GPIO.getTasterByPin(5);
+        std::cout << capturePin->getName() << std::endl;
         if (capturePin && capturePin->getState()) {
             gphoto2pp::CameraFileWrapper fileWrapper;
             gphoto2pp::helper::capture(camera, fileWrapper);

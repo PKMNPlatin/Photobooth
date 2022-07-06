@@ -58,6 +58,8 @@ namespace photobooth {
             std::cout << "Initalized Pin " << taster.getButtonId() << " as "<< taster.getName() << std::endl;
         }
 #endif
+        this->taster.emplace_back(GPIOTaster("TEst", 4));
+        std::cout <<         this->getTasterByPin(4)->getName() << std::endl;
     };
 
     void GPIO::checkPinState() {
