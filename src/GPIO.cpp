@@ -12,22 +12,29 @@ namespace photobooth {
     // GPIO Taster
     //-------------------------------------------------------------------------------------
 
-    GPIOTaster::GPIOTaster(const std::string &buttonName, int buttonId) {
+    GPIOTaster::GPIOTaster(const std::string &buttonName, int pinId, int keyCode = -1) {
         this->buttonName = buttonName;
-        this->buttonId = buttonId;
+        this->pinId = pinId;
+        this->keyCode = keyCode;
     };
 
-    void GPIOTaster::updateButtonState() {
-        const bool currentDigitalState = digitalRead(this->getButtonId()) == 1;
-        this->prevButtonState = this->buttonState;
-        this->buttonState = currentDigitalState;
-        if(this->buttonState != this->prevButtonState) {
-            this->prevButtonState = this->buttonState;
-            if(this->buttonState) {
-                std::cout << "Pressed " << this->getName() << "!" << std::endl;
-            } else {
-                std::cout << "Released " << this->getName() << "!" << std::endl;
-            }
+    bool GPIOTaster::getInternalState(Window &window) {
+        if(GPIO_Enabled) {
+            return (digitalRead(this->getButtonId()) == 1);
+        } else {
+            return glfwGetKey(window.getHandle(), this->getButtonId()) == GLFW_TRUE;
+        }
+    }
+
+    void GPIOTaster::updateButtonState(Window &window) {
+        const bool initalState = this->getState();
+        const bool internalState = getInternalState(window);
+        if(internalState != this->buttonState && !waitForReset) {
+            this->buttonState = internalState;
+        }
+        if(!internalState || waitForReset) {
+            this->buttonState = false;
+            this->waitForReset = internalState;
         }
     }
 
@@ -36,12 +43,27 @@ namespace photobooth {
     }
 
     int GPIOTaster::getButtonId() {
-        return this->buttonId;
+        if(GPIO_Enabled) {
+            return this->getPinId();
+        } else {
+            return this->getKeyCode();
+        }
     }
 
+    int GPIOTaster::getPinId() {
+        return this->pinId;
+    }
+
+    int GPIOTaster::getKeyCode() {
+        return this->keyCode;
+    }
 
     bool GPIOTaster::getState() {
         return this->buttonState;
+    }
+
+    void GPIOTaster::disableUntilReactivation() {
+        this->waitForReset = true;
     }
 
     //-------------------------------------------------------------------------------------
@@ -49,33 +71,36 @@ namespace photobooth {
     //-------------------------------------------------------------------------------------
 
     void GPIO::registerGPIOPins() {
-#ifdef ADD_GPIO_SUPPORT
-        wiringPiSetup();
-        this->taster.emplace_back(GPIOTaster("PREV", 2));
-        this->taster.emplace_back( GPIOTaster("PRINT", 3));
-        this->taster.emplace_back( GPIOTaster("NEXT", 4));
-        this->taster.emplace_back( GPIOTaster("CAPTURE", 5));
+        if(GPIO_Enabled) {
+            wiringPiSetup();
+        }
+        this->taster.emplace_back(GPIOTaster("PREV", GPIO_PIN_PREV, GLFW_KEY_U));
+        this->taster.emplace_back( GPIOTaster("PRINT", GPIO_PIN_PRINT, GLFW_KEY_I));
+        this->taster.emplace_back( GPIOTaster("NEXT", GPIO_PIN_NEXT, GLFW_KEY_O));
+        this->taster.emplace_back( GPIOTaster("CAPTURE", GPIO_PIN_PREV, GLFW_KEY_P));
         for(size_t i = 0; i < this->taster.size(); i++) {
             GPIOTaster taster = this->taster[i];
-            pinMode(taster.getButtonId(), INPUT);
+            if(GPIO_Enabled) {
+                pinMode(taster.getButtonId(), INPUT);
+            }
             std::cout << "Initalized Pin " << taster.getButtonId() << " as "<< taster.getName() << std::endl;
         }
-#endif
-        this->taster.emplace_back(GPIOTaster("TEst", 4));
-        std::cout <<         this->getTasterByPin(4)->getName() << std::endl;
     };
 
-    void GPIO::checkPinState() {
+    void GPIO::checkPinState(Window &window) {
         for (size_t i = 0; i < this->taster.size(); i++) {
-            GPIOTaster taster = this->taster[i];
-            taster.updateButtonState();
+            (&taster[i])->updateButtonState(window);
         }
     };
+
+    std::vector<GPIOTaster>* GPIO::getRegisteredTaster() {
+        return &this->taster;
+    }
 
     GPIOTaster *GPIO::getTasterByName(const std::string &name) {
         for (size_t i = 0; i < this->taster.size(); i++) {
             GPIOTaster *taster = &this->taster[i];
-            if (taster->getName() == name) {
+            if (taster && taster->getName() == name) {
                 return taster;
             }
         }
@@ -85,7 +110,27 @@ namespace photobooth {
     GPIOTaster *GPIO::getTasterByPin(int pin) {
         for (size_t i = 0; i < this->taster.size(); i++) {
             GPIOTaster *taster = &this->taster[i];
-            if (taster->getButtonId() == pin) {
+            if (taster && taster->getButtonId() == pin) {
+                return taster;
+            }
+        }
+        return nullptr;
+    }
+
+    GPIOTaster *GPIO::getTasterByButtonId(int buttonId) {
+        for (size_t i = 0; i < this->taster.size(); i++) {
+            GPIOTaster *taster = &this->taster[i];
+            if (taster && taster->getButtonId() == taster->getButtonId()) {
+                return taster;
+            }
+        }
+        return nullptr;
+    }
+
+    GPIOTaster *GPIO::getTasterByKeyCode(int keyCode) {
+        for (size_t i = 0; i < this->taster.size(); i++) {
+            GPIOTaster *taster = &this->taster[i];
+            if (taster && taster->getButtonId() == taster->getKeyCode()) {
                 return taster;
             }
         }
