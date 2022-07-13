@@ -1,14 +1,9 @@
 #include <iostream>
 #include <csignal>
+#include <chrono>
 #include "GPIO.h"
 
-#include <gphoto2pp/helper_widgets.hpp>
-#include <gphoto2pp/exceptions.hpp>
-#include <gphoto2pp/camera_wrapper.hpp>
-#include <gphoto2pp/window_widget.hpp>
-#include <gphoto2pp/camera_widget_wrapper.hpp>
-#include <gphoto2pp/value_widget_base.hpp>
-
+#include "CameraController.h"
 #include "Window.h"
 #include "Texture.h"
 //
@@ -16,22 +11,52 @@
 //    glViewport(0, 0, width, height);
 //}
 
-int main(int argc, char *argv[]) {
-    gphoto2pp::CameraWrapper camera;
-    std::cout << camera.getModel() << std::endl;
-    std::cout << camera.getSummary() << std::endl;
+using sysclock_t = std::chrono::system_clock;
 
+const std::string CAPTURE_FILE_PATH = "Captures/";
+
+std::string getDateString()
+{
+    std::time_t now = sysclock_t::to_time_t(sysclock_t::now());
+
+    char buf[16] = { 0 };
+    std::strftime(buf, sizeof(buf), "%Y-%m-%d_%H:%M:%S", std::localtime(&now));
+
+    return std::string(buf);
+}
+
+int main(int argc, char *argv[]) {
+    CameraController cameraController;
+    cameraController.InitializeWidgets();
     photobooth::GPIO GPIO;
     GPIO.registerGPIOPins();
 
     Window window(1920, 1080, "Photobooth");
     window.initialize();
-//    glfwSetWindowSizeCallback(window.getHandle(), &GLFWWindow_Resized);
     window.centerWindow();
 
-    int captures = 0;
+    cameraController.Focus();
+
     while (!window.windowShouldClose()) {
         GPIO.checkPinState(window);
+
+        auto pin = GPIO.getTasterByName("CAPTURE");
+        if(pin) {
+            if(pin->getState()) {
+                //TODO: Get Main path from later GalleryComponent
+                cameraController.TakePicture(getDateString() + ".png");
+                pin->disableUntilReactivation();
+            }
+        }
+
+        auto nextTaster = GPIO.getTasterByName("NEXT");
+        if(nextTaster) {
+            if(nextTaster->getState()) {
+                cameraController.UpdateWidgets();
+                nextTaster->disableUntilReactivation();
+//                cameraController.Focus(focus);
+            }
+        }
 
         int windowSize[2];
         window.getSize(windowSize);
@@ -40,31 +65,25 @@ int main(int argc, char *argv[]) {
         glClearColor(1, 1, 1, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        auto preview = camera.capturePreview();
+        if(cameraController.IsLiveViewAllowed()) {
+            auto preview = cameraController.getViewfinderPreviewStream();
+            Texture texture(preview);
 
-        auto captureTaster = GPIO.getTasterByName("CAPTURE");
-        if(captureTaster) {
-            if(captureTaster->getState()) {
-                captureTaster->disableUntilReactivation();
-            }
+            int quadSize = 1;
+
+            texture.bind(0);
+            glBegin(GL_QUADS);
+            glTexCoord2d(0, 0);
+            glVertex2d(-quadSize, -quadSize);
+            glTexCoord2d(0, 1);
+            glVertex2d(-quadSize, quadSize);
+            glTexCoord2d(1, 1);
+            glVertex2d(quadSize, quadSize);
+            glTexCoord2d(1, 0);
+            glVertex2d(quadSize, -quadSize);
+            glEnd();
+            texture.unbind();
         }
-
-        Texture texture(preview);
-
-        int quadSize = 1;
-
-        texture.bind(0);
-        glBegin(GL_QUADS);
-        glTexCoord2d(0, 0);
-        glVertex2d(-quadSize, -quadSize);
-        glTexCoord2d(0, 1);
-        glVertex2d(-quadSize, quadSize);
-        glTexCoord2d(1, 1);
-        glVertex2d(quadSize, quadSize);
-        glTexCoord2d(1, 0);
-        glVertex2d(quadSize, -quadSize);
-        glEnd();
-        texture.unbind();
 
         window.swapBuffers();
     }

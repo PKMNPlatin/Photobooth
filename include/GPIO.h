@@ -15,10 +15,10 @@
 #define GPIO_PIN_NEXT 4
 #define GPIO_PIN_CAPTURE 5
 
-static bool GPIO_Enabled = false;
-
 #ifdef ADD_GPIO_SUPPORT
-    GPIO_Enabled = true;
+    static bool GPIO_Enabled = true;
+#else
+    static auto GPIO_Enabled = false;
 #endif
 
 namespace photobooth {
