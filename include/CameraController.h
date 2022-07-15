@@ -27,7 +27,6 @@
 
 class CameraController {
 
-    std::map<std::string, gphoto2pp::CameraWidgetWrapper*> widgetCache;
     gphoto2pp::CameraWrapper cameraWrapper;
 
 public:
@@ -36,19 +35,11 @@ public:
     ~CameraController();
 
     void InitializeWidgets();
-    void UpdateWidgets();
 
     void TakePicture(const std::string &fileName);
     void EnableAutoFocus();
     bool IsLiveViewAllowed();
     gphoto2pp::CameraFileWrapper getViewfinderPreviewStream();
-
-
-    template <typename T>
-    void registerWidget(const std::string &name, T type);
-
-    template <typename T>
-    void getWidgetByName(const std::string &name, T &pWidgetWrapper);
 
 };
 

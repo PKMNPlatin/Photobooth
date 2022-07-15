@@ -21,63 +21,61 @@
     static auto GPIO_Enabled = false;
 #endif
 
-namespace photobooth {
 
-    class GPIOTaster {
+class GPIOTaster {
 
-        std::string buttonName;
+    std::string buttonName;
 
-        // GPIO Pin
-        int pinId;
+    // GPIO Pin
+    int pinId;
 
-        // Corresponding KeyCode
-        int keyCode;
+    // Corresponding KeyCode
+    int keyCode;
 
-        bool buttonState = false;
-        bool waitForReset = false;
+    bool buttonState = false;
+    bool waitForReset = false;
 
-        bool getInternalState(Window &window);
+    bool getInternalState(Window &window);
 
-    public:
+public:
 
-        GPIOTaster(const std::string &buttonName, int pinId, int keyCode);
+    GPIOTaster(const std::string &buttonName, int pinId, int keyCode);
 
-        void updateButtonState(Window &window);
+    void updateButtonState(Window &window);
 
-        std::string getName();
+    std::string getName();
 
-        int getButtonId();
-        int getKeyCode();
-        int getPinId();
+    int getButtonId();
+    int getKeyCode();
+    int getPinId();
 
-        bool getState();
-        void disableUntilReactivation();
+    bool getState();
+    void disableUntilReactivation();
 
-    };
+};
 
-    class GPIO {
+class GPIO {
 
-        std::vector<GPIOTaster> taster;
+    std::vector<GPIOTaster> taster;
 
-    public:
-        void registerGPIOPins();
+public:
+    void registerGPIOPins();
 
-        void checkPinState(Window &window);
+    void checkPinState(Window &window);
 
-        std::vector<GPIOTaster>* getRegisteredTaster();
+    std::vector<GPIOTaster>* getRegisteredTaster();
 
-        GPIOTaster *getTasterById(int id);
+    GPIOTaster *getTasterById(int id);
 
-        GPIOTaster *getTasterByPin(int pin);
+    GPIOTaster *getTasterByPin(int pin);
 
-        GPIOTaster *getTasterByKeyCode(int keyCode);
+    GPIOTaster *getTasterByKeyCode(int keyCode);
 
-        GPIOTaster *getTasterByButtonId(int buttonId);
+    GPIOTaster *getTasterByButtonId(int buttonId);
 
-        GPIOTaster *getTasterByName(const std::string &name);
+    GPIOTaster *getTasterByName(const std::string &name);
 
-    };
+};
 
-} // photobo
 
 #endif //PHOTOBOOTH_GPIO_H

@@ -6,19 +6,8 @@
 #include <iostream>
 #include "Window.h"
 
-Window::Window(int width, int height, const std::string &title)
+Window::Window(int width_, int height_, const std::string &title_) : width(width_), height(height_)
 {
-    if(!glfwInit()) {
-        return;
-    }
-    glfwDefaultWindowHints();
-    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-    this->window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
-    if (!this->window) {
-        glfwTerminate();
-        throw std::runtime_error("Failed to create GLFW Window " + title);
-    }
 };
 
 Window::~Window() {
@@ -33,6 +22,17 @@ void Window::getSize(int result[2]) {
 
 void Window::initialize()
 {
+    if(!glfwInit()) {
+        return;
+    }
+    glfwDefaultWindowHints();
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+    this->window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+    if (!this->window) {
+        glfwTerminate();
+        throw std::runtime_error("Failed to create GLFW Window " + title);
+    }
     this->centerWindow();
     glfwMakeContextCurrent(this->window);
     glfwShowWindow(this->window);

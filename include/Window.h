@@ -12,6 +12,9 @@
 class Window
 {
     GLFWwindow *window;
+    int width;
+    int height;
+    std::string title;
 
 public:
     Window(int width, int height, const std::string &title);
