@@ -39,7 +39,7 @@ public:
     void UpdateWidgets();
 
     void TakePicture(const std::string &fileName);
-    void Focus();
+    void EnableAutoFocus();
     bool IsLiveViewAllowed();
     gphoto2pp::CameraFileWrapper getViewfinderPreviewStream();
 

@@ -77,7 +77,7 @@ namespace photobooth {
         this->taster.emplace_back(GPIOTaster("PREV", GPIO_PIN_PREV, GLFW_KEY_U));
         this->taster.emplace_back( GPIOTaster("PRINT", GPIO_PIN_PRINT, GLFW_KEY_I));
         this->taster.emplace_back( GPIOTaster("NEXT", GPIO_PIN_NEXT, GLFW_KEY_O));
-        this->taster.emplace_back( GPIOTaster("CAPTURE", GPIO_PIN_PREV, GLFW_KEY_P));
+        this->taster.emplace_back( GPIOTaster("CAPTURE", GPIO_PIN_CAPTURE, GLFW_KEY_P));
         for(size_t i = 0; i < this->taster.size(); i++) {
             GPIOTaster taster = this->taster[i];
             if(GPIO_Enabled) {

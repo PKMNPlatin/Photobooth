@@ -27,9 +27,7 @@ Texture::Texture(const std::string &filePath) : m_RenderID(0), m_FilePath(filePa
 }
 
 Texture::Texture(const gphoto2pp::CameraFileWrapper &cameraFileWrapper) : m_RenderID(0), m_FilePath(""), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0) {
-    stbi_set_flip_vertically_on_load(1);
     m_LocalBuffer = stbi_load_from_memory((unsigned char*)cameraFileWrapper.getDataAndSize().data(), cameraFileWrapper.getDataAndSize().size(), &m_Width, &m_Height, &m_BPP, 4);
-
 
 
     glGenTextures(1, &m_RenderID);

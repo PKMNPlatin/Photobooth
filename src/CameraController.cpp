@@ -70,7 +70,7 @@ void CameraController::UpdateWidgets() {
 }
 
 void CameraController::TakePicture(const std::string &fileName) {
-    this->Focus();
+    this->EnableAutoFocus();
     try {
         gphoto2pp::CameraFileWrapper fileWrapper;
         gphoto2pp::helper::capture(cameraWrapper, fileWrapper);
@@ -78,7 +78,7 @@ void CameraController::TakePicture(const std::string &fileName) {
     } catch(std::exception ex) {}
 }
 
-void CameraController::Focus() {
+void CameraController::EnableAutoFocus() {
     try {
         auto config = cameraWrapper.getConfig();
         static auto autofocusdrive = config.getChildByName<gphoto2pp::ToggleWidget>("autofocusdrive");
