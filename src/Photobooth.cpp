@@ -3,14 +3,65 @@
 //
 
 #include "Photobooth.h"
+#include <Window.h>
 
 #include "Utils.h"
 
 
-Photobooth::Photobooth(): window(1920, 1080, "Photobooth"), imageView(window) {
+Photobooth::Photobooth(): window(1920, 1080, "Photobooth"), liveView(window), imageGallery("Images/", window) {
     window.initialize();
     gpio.registerGPIOPins();
-    cameraController.InitializeWidgets();
+    imageGallery.initialize();
+}
+
+void Photobooth::updateInput() {
+    this->gpio.checkPinState(this->window);
+    auto *pPrev = this->gpio.getTasterByName("PREV");
+    auto *pPrint = this->gpio.getTasterByName("PRINT");
+    auto *pNext = this->gpio.getTasterByName("NEXT");
+    auto *pCapture = this->gpio.getTasterByName("CAPTURE");
+
+    if(!pPrev && !pPrint && !pNext && !pCapture) {
+        this->status_code = 1;
+        throw std::runtime_error("Error while initializing Input keys");
+    }
+
+    //TODO:
+    /*
+     * Check if Prev or Next PinButtons are pressed - if Prev is Pressed and currently in Gallery, go one image back, otherwise close the gallery and go back to viewfinder
+     * if next is pressed and the gallery is closed, open the gallery with the first image of the folder, otherwise show the next image, if there are not images left, just display the last one
+     *
+     */
+
+    if(pNext->getState()) {
+        if(imageGallery.isActive()) {
+            imageGallery.nextImage();
+        } else {
+            imageGallery.open();
+        }
+        pNext->disableUntilReactivation();
+        return;
+    }
+
+    if(pPrev->getState()) {
+        if(imageGallery.isActive()) {
+            imageGallery.previousImage();
+        }
+        pPrev->disableUntilReactivation();
+        return;
+    }
+
+    if(pCapture->getState()) {
+        if (this->imageGallery.isActive()) {
+            this->imageGallery.close();
+        } else {
+            const auto path = imageGallery.getRootPath() + getDateString() + ".png";
+            this->cameraController.TakePicture(path);
+            this->imageGallery.addImageToGallery(path);
+        }
+        pCapture->disableUntilReactivation();
+        return;
+    }
 }
 
 void Photobooth::update() {
@@ -21,40 +72,26 @@ void Photobooth::update() {
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(.0f, windowSize[0], windowSize[1], 0.0f, 0.0f, 1.0f);
+    glOrtho(0.0f, windowSize[0], windowSize[1], 0.0f, 0.0f, 1.0f);
 
-    this->imageView.update(windowSize);
-    if(cameraController.IsLiveViewAllowed()) {
-        auto preview = cameraController.getViewfinderPreviewStream();
-        imageView.setImage(preview);
-    }
-}
-
-void Photobooth::updateInput() {
-    this->gpio.checkPinState(this->window);
-    auto prev = this->gpio.getTasterByName("PREV");
-    auto print = this->gpio.getTasterByName("PRINT");
-    auto next = this->gpio.getTasterByName("NEXT");
-    auto capture = this->gpio.getTasterByName("CAPTURE");
-
-    if(!prev && !print && !next && !capture) {
-        throw std::runtime_error("Error while initializing Input keys");
-    }
-
-    if(capture->getState()) {
-        this->cameraController.TakePicture("Photos/" + getDateString() + ".png");
-        capture->disableUntilReactivation();
+    this->imageGallery.update(windowSize);
+    this->liveView.update(windowSize);
+    if(this->cameraController.IsLiveViewAllowed()) {
+        auto preview = this->cameraController.getViewfinderPreviewStream();
+        this->liveView.setImage(preview);
+        cameraController.EnableAutoFocus();
     }
 }
 
 void Photobooth::draw() {
     glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT);
-    imageView.render();
+    this->liveView.render();
+    this->imageGallery.render();
 }
 
 void Photobooth::runLoop() {
-    while(!window.windowShouldClose()) {
+    while(!this->window.windowShouldClose()) {
         this->updateInput();
         this->update();
         this->draw();

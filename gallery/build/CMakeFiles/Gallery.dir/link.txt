@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -shared -Wl,-soname,libGallery.so -o libGallery.so CMakeFiles/Gallery.dir/src/ImageGallery.cpp.o CMakeFiles/Gallery.dir/src/ImageView.cpp.o CMakeFiles/Gallery.dir/src/Texture.cpp.o CMakeFiles/Gallery.dir/src/Window.cpp.o CMakeFiles/Gallery.dir/src/stb_image.cpp.o  /usr/lib/libglfw.so.3.3 /usr/lib/libGLX.so /usr/lib/libOpenGL.so 

@@ -1,0 +1,3 @@
+/run/media/jona/M2 Storage/Development/Photobooth/gallery/build/CMakeFiles/Gallery.dir
+/run/media/jona/M2 Storage/Development/Photobooth/gallery/build/CMakeFiles/edit_cache.dir
+/run/media/jona/M2 Storage/Development/Photobooth/gallery/build/CMakeFiles/rebuild_cache.dir

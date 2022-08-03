@@ -10,13 +10,15 @@
 #include "ImageView.h"
 #include "GPIO.h"
 #include "CameraController.h"
+#include "ImageGallery.h"
 
 class Photobooth {
 
     int status_code = 0;
 
     Window window;
-    ImageView imageView;
+    ImageView liveView;
+    ImageGallery imageGallery;
 
     CameraController cameraController;
     GPIO gpio;

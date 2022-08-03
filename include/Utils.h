@@ -10,7 +10,7 @@
 
 using sysclock_t = std::chrono::system_clock;
 
-std::string getDateString()
+inline std::string getDateString()
 {
     std::time_t now = sysclock_t::to_time_t(sysclock_t::now());
 

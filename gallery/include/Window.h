@@ -15,9 +15,11 @@ class Window
     int width;
     int height;
     std::string title;
+    float delta;
+    float frameTime;
 
 public:
-    Window(int width, int height, const std::string &title);
+    Window(int width_, int height_, std::string title_);
     ~Window();
     void getSize(int result[2]);
     void initialize();

@@ -2,19 +2,8 @@
 // Created by jona on 7/9/22.
 //
 
-#include <stdexcept>
 #include <iostream>
 #include "Window.h"
-
-Window::Window(int width_, int height_, const std::string &title_) : width(width_), height(height_)
-{
-};
-
-Window::~Window() {
-    if(this->window) {
-        this->destroy();
-    }
-};
 
 void Window::getSize(int result[2]) {
     glfwGetWindowSize(this->window, &result[0], &result[1]);
@@ -66,4 +55,10 @@ void Window::swapBuffers()
 {
     glfwSwapBuffers(this->window);
     glfwPollEvents();
+}
+
+Window::Window(int width_, int height_, std::string title_) : width(width_), height(height_), title(std::move(title_)) {};
+
+Window::~Window() {
+    glfwDestroyWindow(this->window);
 };

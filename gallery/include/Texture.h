@@ -10,11 +10,11 @@
 
 class Texture {
 
+    void prepareTexture();
 
 public:
     unsigned int m_RenderID;
     std::string m_FilePath;
-    unsigned char* m_LocalBuffer;
     int m_Width, m_Height, m_BPP;
 
     Texture(const std::string &path);
