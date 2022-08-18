@@ -38,4 +38,5 @@ target_link_libraries(${PROJECT_NAME} gphoto2pp)
 target_link_libraries(${PROJECT_NAME} gphoto2)
 target_link_libraries(${PROJECT_NAME} wiringPi)
 target_link_libraries(${PROJECT_NAME} Gallery)
+target_link_libraries(${PROJECT_NAME} stdc++fs)
 
