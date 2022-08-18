@@ -54,7 +54,7 @@ void ImageGallery::open() {
 
 void ImageGallery::_updateGalleryCache() {
     this->imageCache_.clear();
-    for(auto const & dir_entry : std::filesystem::directory_iterator(this->rootPath)) {
+    for(auto const & dir_entry : std::experimental::filesystem::directory_iterator(this->rootPath)) {
         this->imageCache_.push_back(std::make_shared<Texture>(dir_entry.path()));
     }
 }
